@@ -1,26 +1,34 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
-const HorarioDisponible = sequelize.define('HorarioDisponible', {
-  dia: {
-    type: DataTypes.ENUM('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'),
+const Horario = sequelize.define('Horario', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  barbero_id: {
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
-  hora_inicio: {
+  fecha: {
+    type: DataTypes.DATEONLY,
+    allowNull: false,
+  },
+  hora: {
     type: DataTypes.TIME,
     allowNull: false,
   },
-  hora_fin: {
-    type: DataTypes.TIME,
+  estado: {
+    type: DataTypes.STRING,
     allowNull: false,
-  },
-  activo: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: true,
+    defaultValue: 'Disponible',
   },
 }, {
+  tableName: 'horarios',
   timestamps: true,
-  tableName: 'horarios_disponibles',
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
 });
 
-module.exports = HorarioDisponible;
+module.exports = Horario;

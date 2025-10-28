@@ -1,0 +1,5 @@
+En el proyecto de prueba que estoy realizando.\
+
+Cuando el barbero va designar que dias tendra disponibilidad para citas, el va a seleccionar el dia y le va a salir un tipo input con checkbox para selecionar las horas disponibles en tal dia. 
+
+Ejemplo>    Lunes Id(1)   9:00 Check   10:00 check y Habra un boton donde agregara el horario  y hara el insert a la tabla con el mismo id del dia y con los diferentes horarios e citas disponibles.

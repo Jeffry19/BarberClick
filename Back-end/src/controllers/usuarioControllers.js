@@ -1,17 +1,18 @@
 const bcrypt = require('bcryptjs');
 const { Usuario } = require('../models');
 
+
+
 const crearUsuario = async (req, res) => {
   try {
-    const { nombre, telefono, email, rol, contrasena } = req.body;
+
+    const datosValidos = await validarDatos(req.body);
+
+    const { nombre, telefono, email, rol, contrasena } = datosValidos;
+    console.log('Datos recibidos:', { nombre, telefono, email, rol, contrasena });
     
-    if (validarDatos()) {
-        throw new Error('Datos invalidos');
-
-
-
-    }else if (await existUsuarioTelefon(telefono)){
-        throw new Error('El telefono ya está en uso')
+    if (await existUsuarioTelefon(telefono)){
+        return res.status(400).json({ message: 'El telefono ya esta en uso' });
 
     }else{
         const hashedPassword = await bcrypt.hash(contrasena, 10);
@@ -35,20 +36,21 @@ const crearUsuario = async (req, res) => {
   }
 };
 
-const validarDatos = async (req, res) => {
+const validarDatos = async (body) => {
+    const { nombre, telefono, rol, contrasena } = body;
 
     if (!nombre) throw new Error('El nombre es obligatorio');
     if (!telefono) throw new Error('El telefono es obligatorio');
     if (!rol) throw new Error('El rol es obligatorio');
     if (!contrasena) throw new Error('La contrasena es obligatoria');
 
+    return  body;
+
 }
 
  async function existUsuarioTelefon(telefono) {
     const usuario = await Usuario.findOne({ where: { telefono } });
-    if (usuario) {
-        throw new Error('El telefono ya está en uso');
-    }
+    return !!usuario;
  }
 
 //  const clienteLogin = async (req, res) => {      
@@ -99,7 +101,7 @@ const eliminarUsuario = async (req, res) => {
         if (!usuario) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
-        await Usuario.destroy(id);
+        await usuario.destroy(id);
         res.status(200).json({ message: 'Usuario eliminado exitosamente' });
     } catch (error) {
         console.error('Error al eliminar usuario:', error);
@@ -110,21 +112,29 @@ const eliminarUsuario = async (req, res) => {
   const editarUsuario = async (req, res) => { 
     try {
         const { id } = req.params;
-        const { nombre, telefono, email, rol, contrasena } = req.body;
-        const usuario = await Usuario.findById(id)
+
+        const datosValidos = await validarDatos(req.body);
+        const { nombre, telefono, email, rol, contrasena } = datosValidos;
+        const usuario = await Usuario.findByPk(id)
 
         if (!usuario) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
-        if (validarDatos()) {
-            throw new Error('Datos invalidos');
+        usuario.nombre = nombre;
+        usuario.telefono = telefono;
+        usuario.email = email;
+        usuario.rol = rol;
+
+        if (contrasena) {
+            usuario.contrasena = await bcrypt.hash(contrasena, 10);
         }
-        await Usuario.save();
+        await usuario.save();
         res.status(200).json({ message: 'Usuario actualizado exitosamente', usuario });
 
         
     } catch (error) {
+        
         res.status(500).json({ message: 'Error al actualizar usuario' });
         console.error('Error al actualizar usuario:', error);
     }

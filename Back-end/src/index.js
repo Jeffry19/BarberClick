@@ -3,6 +3,8 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const sequelize = require('./config/db');
 const usuarioRoutes = require('./routes/usuarioRoutes');
+const horarioRoutes = require('./routes/horarioRoutes');
+const citaRoutes = require('./routes/citaRoutes');
 const path = require('path');
 
 
@@ -18,23 +20,15 @@ app.use(express.json());
 
 // Sincronizar la base de datos
 app.use('/usuario', usuarioRoutes);
+app.use('/horario', horarioRoutes);
+app.use('/cita', citaRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
   res.send('Bienvenido a TurnoFino API');
 });
 
-// Probar conexión a DB y arrancar servidor
-sequelize.authenticate()
-  .then(() => {
-    console.log('✅ Conectado a la base de datos MySQL');
-    app.listen(PORT, () => {
-      console.log(`Servidor corriendo en http://localhost:${PORT}`);
-    });
-  })
-  .catch(err => {
-    console.error('❌ Error al conectar a la base de datos:', err);
-  });
+
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);

@@ -3,8 +3,8 @@ const dotenv = require('dotenv');
 
 dotenv.config({path: '../.env'});
 
-console.log('DB_USER:', process.env.DB_USER); // para probar
-console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
+// console.log('DB_USER:', process.env.DB_USER); // para probar
+// console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
 
 const sequelize = new Sequelize(
   process.env.DB_NAME,
